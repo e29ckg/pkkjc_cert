@@ -39,14 +39,36 @@ $datas_main = array();
 
 
         if($query->rowCount() > 0){                        //count($result)  for odbc
-            foreach($result as $rs){
+            foreach($result as $rs){                
 
-                $sql = "SELECT pru.*
-                        FROM project_user AS pru                
-                        WHERE pru.project_id = $rs->id";
+                $sql = "SELECT prt.*
+                        FROM project_template AS prt                
+                        WHERE prt.project_id = $rs->id";
                 $query = $conn->prepare($sql);
                 $query->execute();
-                $res_pr_u = $query->fetchAll(PDO::FETCH_OBJ);
+                $res_template = $query->fetchAll(PDO::FETCH_OBJ);
+
+                $template = array();
+                foreach($res_template as $rst){
+                    $sql = "SELECT pru.*
+                            FROM project_user AS pru                
+                            WHERE pru.project_id = 1 AND pru.project_template_id = $rst->id";
+                    $query = $conn->prepare($sql);
+                    $query->execute();
+                    $res_pr_u = $query->fetchAll(PDO::FETCH_OBJ);
+
+                    array_push($template,array(
+                        'id' => $rst->id,
+                        'project_id' => $rst->project_id,
+                        'template_name' => $rst->template_name,
+                        'size' => $rst->size,
+                        'orientation' => $rst->orientation,
+                        'template_url' => $rst->template_url,
+                        'user'  => $res_pr_u
+
+                    ));
+                }
+
 
                 array_push($datas,array(
                     'id'    => $rs->id,
@@ -55,13 +77,12 @@ $datas_main = array();
                     'detail' => $rs->detail,
                     'date_train'  => $rs->date_train,
                     'period'    => $rs->period,
-                    'template'  => $rs->template,
-                    'project_user'  => $res_pr_u
+                    'template'  => $template,
                 ));
             }
 
             http_response_code(200);
-            echo json_encode(array('status' => true, 'massege' => 'สำเร็จ', 'projects' => $datas, 'rep' => $result));
+            echo json_encode(array('status' => true, 'massege' => 'สำเร็จ', 'projects' => $datas));
             exit;
         }
      

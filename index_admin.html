@@ -306,20 +306,23 @@
                         <div class="accordion-body">
                           <div>
                             {{pj.detail}}
+                            <img :src="'./img/'+pj.img" alt="img">
                             <button @click="project_update(pj.id)">แก้ไข</button>
                             <button @click="project_del(pj.id)">ลบ</button>
                             
-                            <!-- Button trigger modal modal_img-->
-                          <button @click="bnt_img_show(pj.id)" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_img" >
-                            pic
-                          </button>
-                           <!-- Button trigger modal modal_template-->
-              <button @click="btn_template_show(pj.id)" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_template">
-                Launch static backdrop modal_template
-              </button>
-                                      </div>
-
-                          <div class="card">                            
+                              <!-- Button trigger modal modal_img-->
+                            <button @click="bnt_img_show(pj.id)" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_img" >
+                              pic
+                            </button>
+                                        <!-- Button trigger modal modal_template-->
+                            <button ref="btn_modal_template" @click="template_add(pj.id)" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_template">
+                              เพิ่มแม่แบบ
+                            </button>
+                          </div>
+                                      
+                                      
+                          <div class="card" v-for="tp in pj.template">            
+                            {{tp.template_name}}
                             <div class="table-responsive text-nowrap">
                               <table class="table">
                                 <thead>
@@ -331,7 +334,7 @@
                                   </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0">
-                                  <tr v-for="pju, index in pj.project_user">
+                                  <tr v-for="pju, index in tp.user">
                                     <td>{{index+1}}</td>
                                     <td>{{pju.name}}</td>                                    
                                     <td><span class="badge bg-label-primary me-1" @click="print(pju.id)">พิมพ์ใบประกาศ</span></td>

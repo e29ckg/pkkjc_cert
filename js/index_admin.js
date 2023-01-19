@@ -13,29 +13,8 @@ Vue.createApp({
                 detail:'',
                 period : 1,
                 img : '',
-                template:[
-                    {
-                        id:'1',
-                        project_id:'2023001',
-                        name_template,size:'A4',
-                        orientation:'L',
-                        text:[
-                            {id:'1',project_id:'2023001',project_template_id:'1',text_name:'',text_size:'',text_font:'',text_y:''}
-                        ]
-                    },
-                    {
-                        id:'2',
-                        project_id:'2023001',
-                        name_template,size:'A4',
-                        orientation:'L',
-                        text:[
-                            {id:'1',project_id:'2023001',project_template_id:'1',text_name:'',text_size:'',text_font:'',text_y:''}
-                        ]
-                    }
-                ],
-                name_font:'prompt',
-                name_font_size:36,
-                name_y:69,
+                template:[],
+                text:[],
                 act:'insert',
             },
             projects: [
@@ -60,6 +39,7 @@ Vue.createApp({
                     ]
                 }
             ],
+            template:{project_id:'',template_name:'',size:'',orientation:''},
             font_name:['thsarabun','prompt'],
             url_preview:'',
             isLoading : false,
@@ -162,6 +142,7 @@ Vue.createApp({
                     .finally(() => {
                         this.isLoading = false;
                     })
+                
             }
         },
         project_del(id){
@@ -191,6 +172,9 @@ Vue.createApp({
         modal_project_close(){
            this.cls_modal_project()
            this.$refs.btn_project_close.click()
+        },
+        template_add(id){
+            this.template.project_id = id
         },
         
 

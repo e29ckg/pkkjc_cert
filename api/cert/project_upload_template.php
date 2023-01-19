@@ -60,7 +60,7 @@ if(empty($fileName)){
 				// $fileName = time().'.' .$fileExt;
 				$fileName = $id.time().'.' .$fileExt;
 
-				$sql = "SELECT template FROM project WHERE id=$id ";
+				$sql = "SELECT template_url FROM project_template WHERE id=$id ";
 				$query = $conn->prepare($sql);
 				$query->execute();
 				$result = $query->fetchAll(PDO::FETCH_OBJ);
@@ -99,7 +99,7 @@ if(empty($fileName)){
 if(!isset($errorMSG))
 {
 
-	$sql = "UPDATE project SET template =:template WHERE id = :id ";        
+	$sql = "UPDATE project_template SET template_url =:template WHERE id = :id ";        
         $query = $conn->prepare($sql);
         $query->bindParam(':template', $fileName, PDO::PARAM_STR);
         $query->bindParam(':id',$id, PDO::PARAM_INT);

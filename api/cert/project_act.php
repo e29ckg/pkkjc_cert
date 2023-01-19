@@ -44,6 +44,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $query->bindParam(':created_at',$created_at);
             $query->execute();
 
+            $sql = "INSERT INTO project_template(project_id, template_name, size, orientation) 
+                    VALUE(:project_id, 'ผู้เข้าร่วม', 'A4', 'L');";        
+            $query = $conn->prepare($sql);
+            // $query->bindParam(':id',$id, PDO::PARAM_STR);
+            $query->bindParam(':project_id',$id, PDO::PARAM_STR);
+            $query->execute();
+
+            $sql = "INSERT INTO project_text(project_id, project_template_id, text_name, text_size, text_font, text_y) 
+                    VALUE(:project_id, :project_template_id, 'ชื่อ - สกุล', 36, 'prompt', 69);";        
+            $query = $conn->prepare($sql);
+            // $query->bindParam(':id',$id, PDO::PARAM_STR);
+            $query->bindParam(':project_id',$id, PDO::PARAM_STR);
+            $query->bindParam(':project_template_id',$id, PDO::PARAM_STR);
+            $query->execute();
+
             http_response_code(200);
             echo json_encode(array('status' => true, 'message' => 'ok'));
             exit;                
@@ -83,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id      = $project->id;
             $name_y    = $project->name_y;
 
-            $sql = "UPDATE project 
+            $sql = "UPDATE project_template 
                     SET name_y =:name_y                       
                     WHERE id = :id";   
 
@@ -100,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id      = $project->id;
             $name_font    = $project->name_font;
 
-            $sql = "UPDATE project 
+            $sql = "UPDATE project_template 
                     SET name_font =:name_font                       
                     WHERE id = :id";   
 
