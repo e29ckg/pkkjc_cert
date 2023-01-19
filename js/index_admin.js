@@ -13,7 +13,26 @@ Vue.createApp({
                 detail:'',
                 period : 1,
                 img : '',
-                template:'',
+                template:[
+                    {
+                        id:'1',
+                        project_id:'2023001',
+                        name_template,size:'A4',
+                        orientation:'L',
+                        text:[
+                            {id:'1',project_id:'2023001',project_template_id:'1',text_name:'',text_size:'',text_font:'',text_y:''}
+                        ]
+                    },
+                    {
+                        id:'2',
+                        project_id:'2023001',
+                        name_template,size:'A4',
+                        orientation:'L',
+                        text:[
+                            {id:'1',project_id:'2023001',project_template_id:'1',text_name:'',text_size:'',text_font:'',text_y:''}
+                        ]
+                    }
+                ],
                 name_font:'prompt',
                 name_font_size:36,
                 name_y:69,
