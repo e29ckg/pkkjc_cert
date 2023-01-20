@@ -20,6 +20,8 @@ $fileName  =  $_FILES['sendpdf']['name'];
 $tempPath  =  $_FILES['sendpdf']['tmp_name'];
 $fileSize  =  $_FILES['sendpdf']['size'];
 
+$template_name = 'ผู้เข้าร่วมโครงการ';
+if(isset($_POST['template_name'])){$template_name = $_POST['template_name']; }
 // http_response_code(200);
 // echo json_encode(array(
 //     'status' => true, 
@@ -50,8 +52,7 @@ if(empty($fileName)){
 	if(in_array($fileExt, $valid_extensions))
 	{				
 		//check file not exist our upload folder path
-		if(!file_exists($upload_path . $fileName))
-		{
+		if(!file_exists($upload_path . $fileName)){
 			if(!is_dir($upload_path)){
 				mkdir($upload_path, 0777);
 			}
@@ -80,17 +81,15 @@ if(empty($fileName)){
 				$errorMSG = json_encode(array("message" => "Sorry, your file is too large, please upload 5 MB size", "status" => false));	
 				echo $errorMSG;
 			}
-		}
-		else
-		{		
-			$errorMSG = json_encode(array("message" => "Sorry, file already exists check upload folder", "status" => false));	
+		}else{		
+			$errorMSG = json_encode(array("message" => "Sorry, file already exists check upload folder", "status" => false, 'upload_path' => $upload_path.$fileName));	
 			// $errorMSG = json_encode(array("message" => "Sorry, มีภาพนี้อยู่แล้ว", "status" => false));	
 			echo $errorMSG;
 		}
 	}
 	else
 	{		
-		$errorMSG = json_encode(array("message" => "Sorry, only JPG, JPEG, PNG & GIF files are allowed", "status" => false));	
+		$errorMSG = json_encode(array("message" => "Sorry, only JPG, JPEG, PNG & GIF files are allowed", "status" => false, 'fileExt' => $fileExt));	
 		echo $errorMSG;		
 	}
 }
@@ -99,10 +98,13 @@ if(empty($fileName)){
 if(!isset($errorMSG))
 {
 
-	$sql = "UPDATE project_template SET template_url =:template WHERE id = :id ";        
+	// $sql = "UPDATE project_template SET template_url =:template WHERE id = :id ";    
+	$sql = "INSERT INTO project_template(project_id, template_name, template_url) 
+                    VALUE(:project_id, :template_name, :template_url);";       
         $query = $conn->prepare($sql);
-        $query->bindParam(':template', $fileName, PDO::PARAM_STR);
-        $query->bindParam(':id',$id, PDO::PARAM_INT);
+        $query->bindParam(':project_id',$id, PDO::PARAM_STR);
+        $query->bindParam(':template_name', $template_name, PDO::PARAM_STR);
+        $query->bindParam(':template_url', $fileName, PDO::PARAM_STR);
         $query->execute();
 	
 		$img_link = $fileName;

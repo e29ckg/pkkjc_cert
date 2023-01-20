@@ -305,8 +305,8 @@
                       <div :id="'accordionOne'+index" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
                           <div>
-                            {{pj.detail}}
-                            <img :src="'./img/'+pj.img" alt="img">
+                            {{pj.detail}} {{pj.img}}
+                            <img :src="'./img/'+pj.img" alt="img" height="50" width="50">
                             <button @click="project_update(pj.id)">แก้ไข</button>
                             <button @click="project_del(pj.id)">ลบ</button>
                             
@@ -315,14 +315,14 @@
                               pic
                             </button>
                                         <!-- Button trigger modal modal_template-->
-                            <button ref="btn_modal_template" @click="template_add(pj.id)" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_template">
-                              เพิ่มแม่แบบ
-                            </button>
+                            <button @click="template_add(pj.id)">{{pj.id}} เพิ่ม Template</button>
+                            
                           </div>
                                       
                                       
                           <div class="card" v-for="tp in pj.template">            
-                            {{tp.template_name}}
+                            {{tp.template_name}} 
+                            <button @click="template_update(tp.id)">{{tp.id}} แก้ไขTemplate</button>
                             <div class="table-responsive text-nowrap">
                               <table class="table">
                                 <thead>
@@ -330,7 +330,7 @@
                                     <th>No.</th>
                                     <th>name</th>
                                     <th>Action</th>
-                                    <!-- <th></th> -->
+                                    <th></th>
                                   </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0">
@@ -346,8 +346,10 @@
                                 <tfoot>
                                   <tr>
                                     <td>
-                                      
-                                      <button @click="add_users(pj.id)">เพิ่มรายชื่อ</button>
+                                      <!-- {{tp}} -->
+                                      <button @click="btn_template_del(tp)">ลบ Template</button>
+                                      <!-- <button @click="btn_template_update(tp)">แก้ไข Template</button> -->
+                                      <button @click="add_users(tp)">เพิ่มรายชื่อ</button>
                                     </td>
                                   </tr>
 
@@ -435,13 +437,16 @@
 
              
 
+              <button ref="btn_modal_template_show"  type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_template">
+                เพิ่มแม่แบบ
+              </button>
               <!-- Modal -->
               <div class="modal fade" id="modal_template" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
                       <h5 class="modal-title" id="staticBackdropLabel">Template</h5>
-                      <button @click="cls_modal_project" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      <button ref="modal_template_close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                       
@@ -450,12 +455,11 @@
                           <label for="ex5" class="form-label">Template</label>
                           <input ref="myTemplate" type="file" accept="application/pdf" class="form-control" id="ex5" placeholder="Template">
                         </div>
-                        <div class="mb-3 col-4">
+                        <!-- <div class="mb-3 col-4">
                           <label for="ex6" class="form-label">name_font</label>
                           <select @change="name_font_update" v-model="project.name_font" class="form-select" aria-label="Default select example">
                             <option v-for="nf in font_name" :value="nf">{{nf}}</option>
                           </select>
-                          <!-- <input type="text" class="form-control" id="ex6" placeholder="name_font"> -->
                         </div>
                         <div class="mb-3 col-4">
                           <label for="ex7" class="form-label">name_font_size</label>
@@ -465,8 +469,8 @@
                           <label for="ex8" class="form-label">name_y</label>
                           <input @change="name_y_update" type="number" min="0" max="200" step="1" class="form-control" id="ex8" placeholder="กำหนดตำแหน่ง" v-model="project.name_y">
                         </div>
-                      </div>
-                      {{project}}
+                      </div> -->
+                      {{template}}
                       {{url_preview}}
                       <iframe :src="url_preview" frameborder="0"></iframe>
                     </div>

@@ -50,24 +50,33 @@ $datas_main = array();
 
                 $template = array();
                 foreach($res_template as $rst){
+
                     $sql = "SELECT pru.*
                             FROM project_user AS pru                
-                            WHERE pru.project_id = 1 AND pru.project_template_id = $rst->id";
+                            WHERE pru.project_id = $rs->id AND pru.project_template_id = $rst->id";
                     $query = $conn->prepare($sql);
                     $query->execute();
                     $res_pr_u = $query->fetchAll(PDO::FETCH_OBJ);
 
-                    array_push($template,array(
-                        'id' => $rst->id,
-                        'project_id' => $rst->project_id,
-                        'template_name' => $rst->template_name,
-                        'size' => $rst->size,
-                        'orientation' => $rst->orientation,
-                        'template_url' => $rst->template_url,
-                        'user'  => $res_pr_u
+                    $sql = "SELECT *
+                            FROM project_text                
+                            WHERE project_id = $rs->id AND project_template_id = $rst->id";
+                    $query = $conn->prepare($sql);
+                    $query->execute();
+                    $res_text = $query->fetchAll(PDO::FETCH_OBJ);
 
+                    array_push($template,array(
+                        'id'            => $rst->id,
+                        'project_id'    => $rst->project_id,
+                        'template_name' => $rst->template_name,
+                        'size'          => $rst->size,
+                        'orientation'   => $rst->orientation,
+                        'template_url'  => $rst->template_url,
+                        'text'          => $rst->text,
+                        'user'          => $res_pr_u
                     ));
                 }
+
 
 
                 array_push($datas,array(
@@ -75,6 +84,7 @@ $datas_main = array();
                     'year'  => $rs->year,
                     'name'  => $rs->name,
                     'detail' => $rs->detail,
+                    'img' => $rs->img,
                     'date_train'  => $rs->date_train,
                     'period'    => $rs->period,
                     'template'  => $template,

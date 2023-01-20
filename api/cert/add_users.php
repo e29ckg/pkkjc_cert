@@ -13,7 +13,7 @@ $data = json_decode(file_get_contents("php://input"));
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+$template = $data->template;
 $datas = array();
 
     // The request is using the POST method
@@ -29,10 +29,14 @@ $datas = array();
                 $user_status = 1;
                 $active = 1;
 
-                $sql = "INSERT INTO project_user(project_id, user_id, name, user_status, active) 
-                    VALUE(:project_id, :user_id, :name, :user_status, :active);";        
+                $project_template_id = $template->id;
+                $project_id         = $template->project_id;
+
+                $sql = "INSERT INTO project_user(project_id, project_template_id, user_id, name, user_status, active) 
+                    VALUE(:project_id, :project_template_id, :user_id, :name, :user_status, :active);";        
                 $query = $conn->prepare($sql);
-                $query->bindParam(':project_id',$data->project_id, PDO::PARAM_INT);
+                $query->bindParam(':project_id',$project_id, PDO::PARAM_STR);
+                $query->bindParam(':project_template_id',$project_template_id, PDO::PARAM_STR);
                 $query->bindParam(':user_id',$rs->user_id, PDO::PARAM_INT);
                 $query->bindParam(':name',$name, PDO::PARAM_STR);
                 $query->bindParam(':user_status',$user_status, PDO::PARAM_INT);

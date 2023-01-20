@@ -17,29 +17,8 @@ Vue.createApp({
                 text:[],
                 act:'insert',
             },
-            projects: [
-                {
-                    id: 2023001,
-                    name:'โครงการ',
-                    project_user:[
-                        {id:1,name:'นายพเยาว์ สนพลาย'},
-                        {id:1,name:'นายพเยาว์ สนพลาย เปลี่ยน'},
-                        {id:1,name:'นายพเยาว์ สนพลาย //33'},
-                    ]
-                },
-                {
-                    id: 2023002,
-                    name:'โครงการ22',
-                    name_x:0,
-                    name_y:69,
-                    project_user:[
-                        {id:1,name:'นายพเยาว์ สนพลาย'},
-                        {id:1,name:'นายพเยาว์ สนพลาย เปลี่ยน'},
-                        {id:1,name:'นายพเยาว์ สนพลาย //33'},
-                    ]
-                }
-            ],
-            template:{project_id:'',template_name:'',size:'',orientation:''},
+            projects: [],
+            template:{project_id :'',size : 'A4', orientation : 'L'},
             font_name:['thsarabun','prompt'],
             url_preview:'',
             isLoading : false,
@@ -173,12 +152,10 @@ Vue.createApp({
            this.cls_modal_project()
            this.$refs.btn_project_close.click()
         },
-        template_add(id){
-            this.template.project_id = id
-        },
+        
         
 
-        add_users(id){
+        add_users(template){
             Swal.fire({
                 title: 'Are you sure?',
                 text: "เพิ่มรายชื่อ!",
@@ -189,7 +166,7 @@ Vue.createApp({
                 confirmButtonText: 'Yes, delete it!'
               }).then((result) => {
                 if (result.isConfirmed) {
-                    axios.post('./api/cert/add_users.php',{project_id:id})    
+                    axios.post('./api/cert/add_users.php',{template:template})    
                         .then(response => {
                             if(response.data.status){
                                 this.alert('success',message,timer=0)
@@ -208,7 +185,7 @@ Vue.createApp({
         del_user(pju){
             Swal.fire({
                 title: 'Are you sure?',
-                text: "ต้องการลบ"+pju.name,
+                text: "ต้องการลบ "+pju.name,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -218,7 +195,6 @@ Vue.createApp({
                 if (result.isConfirmed) {
                     axios.post('./api/cert/del_user.php',{id:pju.id})    
                         .then(response => {
-                            this.alert('success',response.message,timer=1000)
                             this.get_projects()
                             this.alert('success',response.data.message,timer=1000)
                         })
@@ -304,7 +280,7 @@ Vue.createApp({
               if(tm[0].type == 'application/pdf') {
                 var formData = new FormData();
                 formData.append("sendpdf", tm[0]);
-                formData.append("id", this.project.id);
+                formData.append("id", this.template.project_id);
                 axios.post('./api/cert/project_upload_template.php', 
                   formData, 
                   {headers:{'Content-Type': 'multipart/form-data'}
@@ -313,7 +289,8 @@ Vue.createApp({
                       if (response.data.status) {
                         
                         this.project.template = response.data.template;
-                        // this.$refs.modal_img_close.click()
+                        this.get_projects()
+                        this.$refs.modal_template_close.click()
       
                       }else {
                           swal.fire({
@@ -351,6 +328,49 @@ Vue.createApp({
             .finally(() => {
                 this.isLoading = false;
             })
+        },
+        
+        btn_template_del(template){
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "ต้องการ Template " + template.id ,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post('./api/cert/template_del.php',{template:template})    
+                        .then(response => {
+                            this.alert('success',response.message,timer=1000)
+                            this.get_projects()
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });                    
+                    // this.get_projects()
+                } else if (result.isDenied) {
+                    Swal.fire('Changes are not saved', '', 'info')
+                }
+            })
+        },
+        template_add(id){
+            this.template.project_id = id
+            this.template.size = 'A4'
+            this.template.orientation = 'L'
+            this.$refs.btn_modal_template_show.click()
+        },
+        template_update(id){
+            axios.post('./api/cert/get_template.php',{id:id})    
+                .then(response => {
+                    this.template = response.data.template                    
+                    this.$refs.btn_modal_template_show.click()
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            // console.log('dd')        
         },
         name_y_update(){
             this.project.act = 'name_y_update'

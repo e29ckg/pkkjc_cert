@@ -150,6 +150,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sql = "DELETE FROM project WHERE id = $id";
             $conn->exec($sql);
 
+            $sql = "SELECT prt.*
+                    FROM project_template AS prt                
+                    WHERE prt.project_id = $id";
+            $query = $conn->prepare($sql);
+            $query->execute();
+            $res_template = $query->fetchAll(PDO::FETCH_OBJ);
+            if($query->rowCount() > 0){
+                foreach($res_template as $rtm){
+
+                    // if(!($rtm->template == '' || $rtm->template == null)){    
+                        unlink('../../template/'.$rtm->template_url);
+                    // }
+                }
+            }
+
+            $sql = "DELETE FROM project_template WHERE project_id = $id";
+            $conn->exec($sql);
+
+            $sql = "DELETE FROM project_text WHERE project_id = $id";
+            $conn->exec($sql);
+
             $sql = "DELETE FROM project_user WHERE project_id = $id";
             $conn->exec($sql);
 
