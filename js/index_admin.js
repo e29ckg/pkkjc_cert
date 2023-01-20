@@ -18,6 +18,8 @@ Vue.createApp({
                 act:'insert',
             },
             projects: [],
+            templates: [],
+            c_users: [],
             template:{project_id :'',size : 'A4', orientation : 'L'},
             font_name:['thsarabun','prompt'],
             url_preview:'',
@@ -25,10 +27,20 @@ Vue.createApp({
         }
     },
     mounted(){
+        window.setTimeout(this.fadeout(), 200);
         this.get_projects()
     },
     
     methods: {
+        fadeout() {
+            isLoading = false
+            // document.querySelector('.preloader').style.opacity = '0';
+            // document.querySelector('.preloader').style.display = 'none';
+        },
+        bnt_loading(){
+            this.alert("success","message",timer=0)
+            this.isLoading = !this.isLoading
+        },
         cls_modal_project(){
             this.project = {name:'',year:'' ,date_train:'', detail:'', period:'', img:'',
             template:'', name_font:'prompt', name_font_size:36, name_y:69, act:'insert'}
@@ -45,6 +57,7 @@ Vue.createApp({
                 });
         },
         get_projects(){
+            this.isLoading = true;
             axios.get('./api/cert/get_projects.php')
             .then(response => {
                 if (response.data.status) {
@@ -60,6 +73,28 @@ Vue.createApp({
             })
         
         }, 
+        cert_users(id){
+            this.isLoading = true;
+            axios.post('./api/cert/get_cert_users.php',{id:id})
+            .then(response => {
+                if (response.data.status) {
+                    this.c_users = response.data.c_users
+                    this.$refs.modal_cert_user.click()
+                } else{
+                    this.alert("error",response.data.message,5000)
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+            .finally(() => {
+                this.isLoading = false;
+            })
+
+        },
+        modal_cert_usert_close(){
+
+        },
         print(id){
             this.isLoading = true
             axios.post('./api/cert/print.php',{id:id})    
@@ -213,6 +248,7 @@ Vue.createApp({
             .then(response => {
                 this.project = response.data.rep
                 this.project.act ='update_img'
+                this.$refs.img_m_show.click()
             })
             .catch(function (error) {
                 console.log(error);
@@ -220,8 +256,7 @@ Vue.createApp({
             
 
         },
-        bnt_img_close(){
-            this.get_projects()            
+        bnt_img_close(){          
             this.cls_modal_project()
         },
         onUpload_img(){
@@ -241,6 +276,7 @@ Vue.createApp({
                       if (response.data.status) {
                         
                         this.project.img = response.data.img;
+                        this.get_projects()
                         // this.$refs.modal_img_close.click()
       
                       }else {
@@ -426,13 +462,14 @@ Vue.createApp({
                 this.isLoading = false;
             })
         },
+       
 
      
       alert(icon,message,timer=0){
         swal.fire({
           icon: icon,
           title: message,
-          showConfirmButton: false,
+          showConfirmButton: true,
           timer: timer,
         });
       },

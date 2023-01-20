@@ -35,26 +35,26 @@ $datas_main = array();
         if($query->rowCount() > 0){                        //count($result)  for odbc
             // foreach($result as $rs){
 
-                $sql = "SELECT prt.*
-                        FROM project_template AS prt                
-                        WHERE prt.project_id = $id";
-                $query = $conn->prepare($sql);
-                $query->execute();
-                $template = $query->fetchAll(PDO::FETCH_OBJ);
+            //     $sql = "SELECT prt.*
+            //             FROM project_template AS prt                
+            //             WHERE prt.project_id = $id";
+            //     $query = $conn->prepare($sql);
+            //     $query->execute();
+            //     $template = $query->fetchAll(PDO::FETCH_OBJ);
 
-                array_push($datas,array(
-                    'id' => $rs->id,
-                    'year' => $rs->year,
-                    'name' => $rs->name,
-                    'detail' => $rs->detail,
-                    'date_train'  => $rs->date_train,
-                    'period'  => $rs->period,
-                    'template'  => $template
-                ));
+            //     array_push($datas,array(
+            //         'id' => $rs->id,
+            //         'year' => $rs->year,
+            //         'name' => $rs->name,
+            //         'detail' => $rs->detail,
+            //         'date_train'  => $rs->date_train,
+            //         'period'  => $rs->period,
+            //         'template'  => $template
+            //     ));
             // }
 
             http_response_code(200);
-            echo json_encode(array('status' => true, 'massege' => 'สำเร็จ', 'projects' => $datas, 'rep' => $result));
+            echo json_encode(array('status' => true, 'massege' => 'สำเร็จ', 'rep' => $result));
             exit;
         }
      

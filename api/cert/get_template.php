@@ -42,11 +42,11 @@ $datas_main = array();
                 $texts = $query->fetchAll(PDO::FETCH_OBJ);
 
                 array_push($datas,array(
-                    'id' => $rs->id,
-                    'project_id' => $rs->project_id,
+                    'id'    => $rs->id,
+                    'project_id'    => $rs->project_id,
                     'template_name' => $rs->template_name,
                     'size' => $rs->size,
-                    'orientation'  => $rs->orientation,
+                    'orientation'   => $rs->orientation,
                     'template_url'  => $rs->template_url,
                     // 'texts'  => $texts
                 ));

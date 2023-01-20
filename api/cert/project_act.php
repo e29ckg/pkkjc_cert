@@ -30,7 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
             $created_at = date("Y-m-d h:i:s");
-            $date_train = date("Y-m-d h:i:s",$project->date_train);
+            if(isset($project->date_train)){
+
+                $date_train = date("Y-m-d h:i:s",$project->date_train);
+            }
 
             $sql = "INSERT INTO project(id, project.year, `name`, date_train, detail, period, created_at) 
                     VALUE(:id, :year, :name, :date_train, :detail, :period, :created_at);";        
@@ -44,20 +47,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $query->bindParam(':created_at',$created_at);
             $query->execute();
 
-            $sql = "INSERT INTO project_template(project_id, template_name, size, orientation) 
-                    VALUE(:project_id, 'ผู้เข้าร่วม', 'A4', 'L');";        
-            $query = $conn->prepare($sql);
-            // $query->bindParam(':id',$id, PDO::PARAM_STR);
-            $query->bindParam(':project_id',$id, PDO::PARAM_STR);
-            $query->execute();
+            // $sql = "INSERT INTO project_template(project_id, template_name, size, orientation) 
+            //         VALUE(:project_id, 'ผู้เข้าร่วม', 'A4', 'L');";        
+            // $query = $conn->prepare($sql);
+            // $query->bindParam(':project_id',$id, PDO::PARAM_STR);
+            // $query->execute();
 
-            $sql = "INSERT INTO project_text(project_id, project_template_id, text_name, text_size, text_font, text_y) 
-                    VALUE(:project_id, :project_template_id, 'ชื่อ - สกุล', 36, 'prompt', 69);";        
-            $query = $conn->prepare($sql);
-            // $query->bindParam(':id',$id, PDO::PARAM_STR);
-            $query->bindParam(':project_id',$id, PDO::PARAM_STR);
-            $query->bindParam(':project_template_id',$id, PDO::PARAM_STR);
-            $query->execute();
+            // $sql = "INSERT INTO project_text(project_id, project_template_id, text_name, text_size, text_font, text_y) 
+            //         VALUE(:project_id, :project_template_id, 'ชื่อ - สกุล', 36, 'prompt', 69);";        
+            // $query = $conn->prepare($sql);
+            // $query->bindParam(':project_id',$id, PDO::PARAM_STR);
+            // $query->bindParam(':project_template_id',$id, PDO::PARAM_STR);
+            // $query->execute();
 
             http_response_code(200);
             echo json_encode(array('status' => true, 'message' => 'ok'));
