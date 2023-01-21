@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
             $created_at = date("Y-m-d h:i:s");
-            if(isset($project->date_train)){
+            if(isset($project->date_train) && $project->date_train != ''){
 
                 $date_train = date("Y-m-d h:i:s",$project->date_train);
             }

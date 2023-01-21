@@ -24,6 +24,11 @@ $template_name = 'ผู้เข้าร่วมโครงการ';
 $template_size = 'A4';
 $template_orientation = 'L';
 
+$text_name  = 'ชื่อ-สกุล(ทดสอบ)';
+$text_font  = 'prompt';
+$text_size  = 36;
+$text_y     = 69;
+
 if(isset($_POST['template_name'])){
 	$template_name = $_POST['template_name']; 
 }
@@ -33,6 +38,20 @@ if(isset($_POST['template_name'])){
 if(isset($_POST['template_name'])){
 	$template_orientation = $_POST['template_orientation']; 
 }
+
+if(isset($_POST['text_name'])){
+	$text_font = $_POST['text_name']; 
+}
+if(isset($_POST['text_font'])){
+	$text_font = $_POST['text_font']; 
+}
+if(isset($_POST['text_size'])){
+	$text_size = $_POST['text_size']; 
+}
+if(isset($_POST['text_y'])){
+	$text_y = $_POST['text_y']; 
+}
+
 // http_response_code(200);
 // echo json_encode(array(
 //     'status' => true, 
@@ -46,6 +65,8 @@ if(empty($id)){
 	echo $errorMSG;
 	exit;
 }
+
+
 
 if(empty($fileName)){
 	$errorMSG = json_encode(array("message" => "please select pdf", "status" => false));	
@@ -112,7 +133,7 @@ if(!isset($errorMSG))
 	// $sql = "UPDATE project_template SET template_url =:template WHERE id = :id ";   
 	$template_id = time(); 
 	$sql = "INSERT INTO project_template(id, project_id, template_name, size, orientation, template_url) 
-				VALUE(:template_id, :project_id, :template_name, :size, :orientation, :template_url);";       
+			VALUE(:template_id, :project_id, :template_name, :size, :orientation, :template_url);";       
 	$query = $conn->prepare($sql);
 	$query->bindParam(':template_id',$template_id, PDO::PARAM_STR);
 	$query->bindParam(':project_id',$id, PDO::PARAM_STR);
@@ -122,9 +143,45 @@ if(!isset($errorMSG))
 	$query->bindParam(':template_url', $fileName, PDO::PARAM_STR);
 	$query->execute();
 
+    $template = array();
+    array_push($template,array(
+        "id"    => $template_id,
+        "template_name"  => $template_name,
+        "project_id"  => $id,
+        "size"  => $template_size,
+        "orientation"  => $template_orientation,
+        "template_url"  => '/pkkjc_cert/template/'.$fileName,
+        "template_act"  => 'update',
+    ));
+
+
+	$sql = "INSERT INTO project_text(id, project_id, project_template_id, text_name, text_font, text_size, text_y) 
+			VALUE(:text_id, :project_id, :project_template_id, :text_name, :text_font, :text_size, :text_y);";       
+	$query = $conn->prepare($sql);
+	$query->bindParam(':text_id',$template_id, PDO::PARAM_STR);
+	$query->bindParam(':project_id',$id, PDO::PARAM_STR);
+	$query->bindParam(':project_template_id', $template_id, PDO::PARAM_STR);
+	$query->bindParam(':text_name', $text_name, PDO::PARAM_STR);
+	$query->bindParam(':text_font', $text_font, PDO::PARAM_STR);
+	$query->bindParam(':text_size', $text_size, PDO::PARAM_INT);
+	$query->bindParam(':text_y', $text_y, PDO::PARAM_INT);
+	$query->execute();
+
+	$text = array();
+    array_push($text,array(
+        "id"    => $template_id,
+        "project_id"  => $id,
+        "project_template_id"  => $template_id,
+        "text_name"  => $text_name,
+        "text_font"  => $text_font,
+        "text_size"  => $text_size,
+        "text_y"  => $text_y
+    ));
+
+    
 	$img_link = $fileName;
-		// $img_link = $_SERVER['REQUEST_SCHEME'].'://'. $_SERVER['HTTP_HOST'] . '/pkkjc_cert/img/'. $fileName;
-	echo json_encode(array("message" => "Image Uploaded Successfully", "status" => true,"template" =>  $img_link));	
+		// $img_link = $_SERVER['REQUEST_SCHEME'].'://'. $_SERVER['HTTP_HOST'] . '/pkkjc_cert/template/'. $fileName;
+	echo json_encode(array("message" => "Image Uploaded Successfully", "status" => true,"template" =>  $template, 'text' => $text));	
 }
 
 ?>

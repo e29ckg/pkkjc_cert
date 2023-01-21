@@ -117,6 +117,7 @@
                               <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                               <div class="card-footer text-center mt-3">
                                   <button @click="cert_users(pj.id)" class="btn btn-success">สมาชิก</button>
+                                  <button @click="project_del(pj.id)" class="btn btn-danger">DELETE</button>
                                   <!-- <button class="btn btn-success">สมาชิก</button>
                                   <button class="btn btn-success">สมาชิก</button> -->
                               </div>
@@ -129,14 +130,20 @@
                                   <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Name</th>
-                                    <th scope="col text-end"><button class="btn btn-success btn-sm">เพิ่ม Template</button></th>
+                                    <th scope="col text-end">
+                                        <button @click="template_add(pj.id)" class="btn btn-success btn-sm">เพิ่ม Template</button>
+                                    </th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   <tr v-for="tmp,index in pj.template">
                                     <th scope="row">{{index+1}}</th>
                                     <td>{{tmp.template_name}}</td>
-                                    <td>{{tmp.id}}</td>
+                                    <td>
+                                        {{tmp.id}}
+                                        <button @click="btn_template_update(tmp)" class="btn btn-warning">แก้ไข</button>
+                                        <button @click="btn_template_del2(tmp)" class="btn btn-danger">ลบ</button>
+                                    </td>
                                   </tr>                          
                                 </tbody>
                             </table>
@@ -209,17 +216,79 @@
                     </div>
                     <div class="modal-body">
                         <div v-if="project.img">
-                        <img :src="'./img/'+project.img" alt="" srcset="">
+                            <img :src="'./img/'+project.img" alt="" srcset="">
                         </div>
                         <div class="mb-3">
-                        <label for="img" class="form-label">ถาพแบนเนอร์</label>
-                        <input ref="myImg" type="file" accept="image/jpeg,image/png" class="form-control" id="img" placeholder="ถาพแบนเนอร์">
+                            <label for="img" class="form-label">ถาพแบนเนอร์</label>
+                            <input ref="myImg" type="file" accept="image/jpeg,image/png" class="form-control" id="img" placeholder="ถาพแบนเนอร์">
                         </div>
                         {{project}}
                     </div>
                     <div class="modal-footer">
                         <button @click="bnt_img_close" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-primary" @click="onUpload_img(project.id)">Understood</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button ref="tm_m_show" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_template" hidden>
+            Template
+        </button>
+            <!-- Modal modal_template-->
+        <div class="modal fade" id="modal_template" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Template</h5>
+                        <button @click="bnt_template_close" ref="modal_template_close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="ex4" class="form-label">ชื่อ Template</label>
+                            <input type="text" class="form-control" id="ex4" placeholder="ชื่อ Template" v-model="template.template_name">
+                        </div>
+                        <div class="row" v-if="template.template_url == ''">
+                            <div class="col mb-3">
+                                <!-- <label for="mytem" class="form-label">Template</label> -->
+                                <input ref="myTemplate" type="file" accept="application/pdf" class="form-control" id="mytem" placeholder="file pdf">
+                            </div>
+                            <div class="col">
+                                <button  type="button" class="btn btn-primary" @click="onUpload_template(project.id)">upload</button>
+                            </div>
+
+                        </div>
+                        <div class="row" v-if="template.template_url != ''">                            
+                            <div class="mb-3 col-3">
+                              <label for="ex6" class="form-label">FONT</label>
+                              <select  v-model="text.text_font" class="form-select" aria-label="Default select example">
+                                <option v-for="nf in font_name" :value="nf">{{nf}}</option>
+                              </select>
+                            </div>
+                            <div class="mb-3 col-3">
+                              <label for="ex7" class="form-label">FONT_SIZE</label>
+                              <input  type="number" min="9" max="84" step="1" class="form-control" id="ex7" placeholder="FONT_SIZE" v-model="text.text_size">
+                            </div>
+                            <div class="mb-3 col-3">
+                              <label for="ex8" class="form-label">ระยะจากขอบบน</label>
+                              <input  type="number" min="0" max="200" step="1" class="form-control" id="ex8" placeholder="กำหนดตำแหน่ง" v-model="text.text_y">
+                            </div>
+                            <div class="mb-3 col-3">
+                              <!-- <label for="ex8" class="form-label">ระยะจากขอบบน</label> -->
+                              <button type="button" class="btn btn-primary" @click="text_update">PREVIEW</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <embed v-if="template.template_url !='' && url_preview == ''" :src="template.template_url" type="application/pdf" width="800" height="600">
+                            <embed v-if="url_preview != ''" :src="url_preview" type="application/pdf" width="800" height="600">
+                        </div>
+                        {{template}}
+                        {{text}}
+                    </div>
+                    <div class="modal-footer">
+                        <button v-if="template.id" type="button" class="btn btn-danger" @click="btn_template_del()">DELETE</button>
+                        <button @click="bnt_template_close" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        
                     </div>
                 </div>
             </div>

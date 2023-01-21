@@ -19,8 +19,9 @@ Vue.createApp({
             },
             projects: [],
             templates: [],
+            text: {text_name:'ชื่อ-สกุล(ทดสอบ)', text_size:36, text_font:'prompt', text_y:69},
             c_users: [],
-            template:{project_id :'',size : 'A4', orientation : 'L'},
+            template:{template_name:'', project_id :'',size : 'A4', orientation : 'L',template_url:''},
             font_name:['thsarabun','prompt'],
             url_preview:'',
             isLoading : false,
@@ -297,6 +298,12 @@ Vue.createApp({
                   });
                 }
             }      
+        },       
+        bnt_template_close(){
+            this.template = {template_name:'', project_id :'',size : 'A4', orientation : 'L',template_url:''}
+            this.text = {text_name:'ชื่อ-สกุล(ทดสอบ)', text_size:36, text_font:'prompt', text_y:69}
+            this.url_preview = ''
+            this.$refs.modal_template_close.click()
         },
         btn_template_show(id){
             axios.post('./api/cert/get_project.php',{id:id})    
@@ -310,23 +317,31 @@ Vue.createApp({
 
         },
         onUpload_template(){
-            // console.log(this.$refs.myFiles.files[0].name);
             var tm = this.$refs.myTemplate.files
             if (tm.length > 0) {
               if(tm[0].type == 'application/pdf') {
                 var formData = new FormData();
                 formData.append("sendpdf", tm[0]);
                 formData.append("id", this.template.project_id);
-                axios.post('./api/cert/project_upload_template.php', 
+                formData.append("template_name", this.template.template_name);
+                formData.append("template_size", this.template.size);
+                formData.append("template_orientation", this.template.orientation);
+                formData.append("text_name", this.text.text_name);
+                formData.append("text_font", this.text.text_font);
+                formData.append("text_size", this.text.text_size);
+                formData.append("text_y", this.text.text_y);
+                formData.append("template_act", this.template.act);
+                this.isLoading = true  
+                axios.post('./api/cert/template_upload.php', 
                   formData, 
                   {headers:{'Content-Type': 'multipart/form-data'}
                 })
                   .then(response => {
-                      if (response.data.status) {
-                        
-                        this.project.template = response.data.template;
+                      if (response.data.status) {                        
+                        this.template = response.data.template[0];
+                        this.text = response.data.text[0];
                         this.get_projects()
-                        this.$refs.modal_template_close.click()
+                        // this.$refs.modal_template_close.click()
       
                       }else {
                           swal.fire({
@@ -337,27 +352,33 @@ Vue.createApp({
                           });
                       }
                   })
+                  .finally(() => {
+                    this.isLoading = false;
+                })
               } else{
                   swal.fire({
                       icon: 'error',
-                      title: "ไฟล์ที่อัพโหลดต้องเป็นไฟล์ jpeg หรือ png เท่านั้น",
+                      title: "ไฟล์ที่อัพโหลดต้องเป็นไฟล์ pdf เท่านั้น",
                       showConfirmButton: true,
                       timer: 1500
                   });
                 }
-            }      
+            }     
         },
-        template_preview(){
-            this.isLoading = true
-            
-            axios.post('/mpdf/api/cert/preview.php',{
-                data    : this.project
-            }) 
+        btn_template_update(template){
+            this.isLoading = true;
+            axios.post('./api/cert/get_template.php',{id:template.id})    
             .then(response => {
-                this.url_preview = response.data.url
-                // console.log(url)
-                // window.open(url,'_blank')
-            })           
+                if(response.data.status){
+                    // this.alert('success',response.data.message,timer=1000)
+                    this.template = response.data.template[0]
+                    this.text = response.data.text[0]
+                    this.$refs.tm_m_show.click()
+
+                }else{
+                    this.alert('warning',response.data.message,timer=0)
+                }
+            })
             .catch(function (error) {
                 console.log(error);
             })
@@ -366,10 +387,37 @@ Vue.createApp({
             })
         },
         
-        btn_template_del(template){
+        
+        btn_template_del(){            
             Swal.fire({
                 title: 'Are you sure?',
-                text: "ต้องการ Template " + template.id ,
+                text: "ต้องการ Template " + this.template.template_name ,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post('./api/cert/template_del.php',{template:this.template})    
+                        .then(response => {
+                            this.alert('success',response.message,timer=1000)
+                            this.bnt_template_close()
+                            this.get_projects()
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });                    
+                    // this.get_projects()
+                } else if (result.isDenied) {
+                    Swal.fire('Changes are not saved', '', 'info')
+                }
+            })
+        },
+        btn_template_del2(template){            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "ต้องการ Template " + template.template_name ,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -392,11 +440,16 @@ Vue.createApp({
             })
         },
         template_add(id){
+            this.get_project(id)
             this.template.project_id = id
+            this.template.template_name = 'ผู้เข้าร่วม'
             this.template.size = 'A4'
             this.template.orientation = 'L'
-            this.$refs.btn_modal_template_show.click()
+            this.template.act = 'insert'
+            this.$refs.tm_m_show.click()
+
         },
+        
         template_update(id){
             axios.post('./api/cert/get_template.php',{id:id})    
                 .then(response => {
@@ -408,12 +461,12 @@ Vue.createApp({
                 });
             // console.log('dd')        
         },
-        name_y_update(){
-            this.project.act = 'name_y_update'
-            axios.post('./api/cert/project_act.php',{project:this.project})    
+        text_update(){
+            this.isLoading = true;
+            axios.post('./api/cert/text_update.php',{text:this.text,template:this.template})    
             .then(response => {
                 if(response.data.status){
-                    // this.alert('success',response.data.message,timer=1000)
+                    this.alert('success',response.data.message,timer=1000)
                     this.template_preview()
                 }else{
                     this.alert('warning',response.data.message,timer=0)
@@ -425,44 +478,26 @@ Vue.createApp({
             .finally(() => {
                 this.isLoading = false;
             })
-        },
-        name_font_update(){
-            this.project.act = 'name_font_update'
-            axios.post('./api/cert/project_act.php',{project:this.project})    
+        }, 
+        template_preview(){         
+            this.isLoading = true 
+            axios.post('/mpdf/api/cert/preview.php',{
+                template : this.template,
+                text    : this.text
+            }) 
             .then(response => {
-                if(response.data.status){
-                    // this.alert('success',response.data.message,timer=1000)
-                    this.template_preview()
-                }else{
-                    this.alert('warning',response.data.message,timer=0)
-                }
-            })
+                this.url_preview = response.data.url
+                
+                // console.log(url)
+                // window.open(url,'_blank')
+            })           
             .catch(function (error) {
                 console.log(error);
             })
             .finally(() => {
                 this.isLoading = false;
             })
-        },
-        name_font_size_update(){
-            this.project.act = 'name_font_size_update'
-            axios.post('./api/cert/project_act.php',{project:this.project})    
-            .then(response => {
-                if(response.data.status){
-                    // this.alert('success',response.data.message,timer=1000)
-                    this.template_preview()
-                }else{
-                    this.alert('warning',response.data.message,timer=0)
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-            .finally(() => {
-                this.isLoading = false;
-            })
-        },
-       
+        },      
 
      
       alert(icon,message,timer=0){

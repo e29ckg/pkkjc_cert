@@ -28,15 +28,15 @@ $datas_main = array();
                 WHERE id = '$id'";
         $query = $conn->prepare($sql);
         $query->execute();
-        $result = $query->fetchAll(PDO::FETCH_OBJ);
+        $rs = $query->fetch(PDO::FETCH_OBJ);
 
 
         if($query->rowCount() > 0){                        //count($result)  for odbc
-            foreach($result as $rs){
+            // foreach($result as $rs){
 
                 $sql = "SELECT *
                         FROM project_text                
-                        WHERE project_id = '$id'";
+                        WHERE project_template_id = '$id'";
                 $query = $conn->prepare($sql);
                 $query->execute();
                 $texts = $query->fetchAll(PDO::FETCH_OBJ);
@@ -47,13 +47,13 @@ $datas_main = array();
                     'template_name' => $rs->template_name,
                     'size' => $rs->size,
                     'orientation'   => $rs->orientation,
-                    'template_url'  => $rs->template_url,
+                    'template_url'  => '/pkkjc_cert/template/'.$rs->template_url,
                     // 'texts'  => $texts
                 ));
-            }
+            // }
 
             http_response_code(200);
-            echo json_encode(array('status' => true, 'massege' => 'สำเร็จ', 'template' => $datas));
+            echo json_encode(array('status' => true, 'massege' => 'สำเร็จ', 'template' =>  $datas, "text" => $texts));
             exit;
         }
      
