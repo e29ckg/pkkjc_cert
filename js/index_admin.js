@@ -96,6 +96,7 @@ Vue.createApp({
                 this.isLoading = false;
             })
         },
+        
         cert_users(id){
             this.isLoading = true;
             axios.post('./api/cert/get_cert_users.php',{id:id})
@@ -301,6 +302,47 @@ Vue.createApp({
                 }
             })
               
+        },
+        c_user_del(c_user){
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "ต้องการลบ "+ c_user.name,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post('./api/cert/del_user.php',{id:c_user.id})    
+                        .then(response => {
+                            this.get_projects()
+                            this.alert('success',response.data.message,timer=1000)
+                            this.isLoading = true;
+                            axios.post('./api/cert/get_cert_users.php',{id:c_user.project_id})
+                            .then(response => {
+                                if (response.data.status) {
+                                    this.c_users = response.data.c_users
+                                    this.$refs.modal_cert_user.click()
+                                } else{
+                                    this.alert("error",response.data.message,5000)
+                                }
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                            .finally(() => {
+                                this.isLoading = false;
+                            })
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });                    
+                    this.get_projects()
+                } else if (result.isDenied) {
+                    Swal.fire('Changes are not saved', '', 'info')
+                }
+            })
         },
         bnt_img_show(id){
             axios.post('./api/cert/get_project.php',{id:id})    

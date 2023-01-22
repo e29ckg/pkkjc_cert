@@ -325,7 +325,8 @@
                           <tr v-for="cu,index in c_users">
                             <th scope="row">{{index + 1}}</th>
                             <td>{{cu.name}}</td>
-                            <td>{{cu.id}}</td>
+                            <td>{{cu.id}}<button @click="c_user_del(cu)">ลบ</button></td>
+                            
                           </tr>                          
                         </tbody>
                       </table>
