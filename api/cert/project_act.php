@@ -73,6 +73,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $detail    = $project->detail;
             $period    = $project->period;
 
+            if(isset($project->year) && $project->year != ''){
+                $year = date("Y",$project->year);
+            }
+
             $sql = "UPDATE project 
                     SET name =:name, 
                         year =:year, 
@@ -95,57 +99,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(array('status' => true, 'message' => 'ok', 'responseJSON' => $project));
             exit;                
         }  
-        if($project->act == 'name_y_update'){
-            $id      = $project->id;
-            $name_y    = $project->name_y;
-
-            $sql = "UPDATE project_template 
-                    SET name_y =:name_y                       
-                    WHERE id = :id";   
-
-            $query = $conn->prepare($sql);
-            $query->bindParam(':name_y',$name_y, PDO::PARAM_INT);
-            $query->bindParam(':id',$id, PDO::PARAM_STR);
-            $query->execute();    
-
-            http_response_code(200);
-            echo json_encode(array('status' => true, 'message' => 'ok', 'responseJSON' => $project));
-            exit;                
-        }  
-        if($project->act == 'name_font_update'){
-            $id      = $project->id;
-            $name_font    = $project->name_font;
-
-            $sql = "UPDATE project_template 
-                    SET name_font =:name_font                       
-                    WHERE id = :id";   
-
-            $query = $conn->prepare($sql);
-            $query->bindParam(':name_font',$name_font, PDO::PARAM_INT);
-            $query->bindParam(':id',$id, PDO::PARAM_STR);
-            $query->execute();    
-
-            http_response_code(200);
-            echo json_encode(array('status' => true, 'message' => 'ok', 'responseJSON' => $project));
-            exit;                
-        }  
-        if($project->act == 'name_font_size_update'){
-            $id      = $project->id;
-            $name_font_size    = $project->name_font_size;
-
-            $sql = "UPDATE project 
-                    SET name_font_size =:name_font_size                       
-                    WHERE id = :id";   
-
-            $query = $conn->prepare($sql);
-            $query->bindParam(':name_font_size',$name_font_size, PDO::PARAM_INT);
-            $query->bindParam(':id',$id, PDO::PARAM_STR);
-            $query->execute();    
-
-            http_response_code(200);
-            echo json_encode(array('status' => true, 'message' => 'ok', 'responseJSON' => $project));
-            exit;                
-        }  
+        
+        
+         
         if($project->act == 'del'){
             $id     = $project->id;
             $sql = "DELETE FROM project WHERE id = $id";

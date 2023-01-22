@@ -21,6 +21,8 @@ Vue.createApp({
             templates: [],
             text: {text_name:'ชื่อ-สกุล(ทดสอบ)', text_size:36, text_font:'prompt', text_y:69},
             c_users: [],
+            users : [],
+            users_by : '',
             template:{template_name:'', project_id :'',size : 'A4', orientation : 'L',template_url:''},
             font_name:['thsarabun','prompt'],
             url_preview:'',
@@ -74,6 +76,26 @@ Vue.createApp({
             })
         
         }, 
+        get_template(template_id){
+            this.isLoading = true;
+            axios.post('./api/cert/get_template.php',{id:template_id})    
+            .then(response => {
+                if(response.data.status){
+                    // this.alert('success',response.data.message,timer=1000)
+                    this.template = response.data.template[0]
+                    this.text = response.data.text[0]
+
+                }else{
+                    this.alert('warning',response.data.message,timer=0)
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+            .finally(() => {
+                this.isLoading = false;
+            })
+        },
         cert_users(id){
             this.isLoading = true;
             axios.post('./api/cert/get_cert_users.php',{id:id})
@@ -189,7 +211,43 @@ Vue.createApp({
            this.$refs.btn_project_close.click()
         },
         
-        
+        user_add(template){
+            this.get_template(template.id)
+            this.$refs.modal_cert_usert.click()
+        },
+        user_del(index){
+            this.users.splice(index, 1);
+        },
+        user_add_pkkjc(){
+            this.users_by = 'pkkjc'
+            axios.post('./api/cert/get_users_pkkjc.php')    
+            .then(response => {
+                if(response.data.status){
+                    this.alert('success',response.data.message,timer=0)
+                    this.users = response.data.users
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        user_save(){
+            if(this.users_by == 'pkkjc'){
+                axios.post('./api/cert/users_save_pkkjc.php',{
+                    template:this.template,
+                    users   :this.users
+                })    
+                .then(response => {
+                    if(response.data.status){
+                        this.alert('success',response.data.message,timer=0)
+                        this.users = response.data.users
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
 
         add_users(template){
             Swal.fire({
