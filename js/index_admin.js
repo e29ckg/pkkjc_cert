@@ -97,15 +97,15 @@ Vue.createApp({
             })
         },
         
-        cert_users(id){
+        cert_users(project_id){
             this.isLoading = true;
-            axios.post('./api/cert/get_cert_users.php',{id:id})
+            axios.post('./api/cert/get_cert_users.php',{id:project_id})
             .then(response => {
                 if (response.data.status) {
                     this.c_users = response.data.c_users
                     this.$refs.modal_cert_user.click()
                 } else{
-                    this.alert("error",response.data.message,5000)
+                    this.alert("error",response.data.message,3000)
                 }
             })
             .catch(function (error) {
@@ -116,6 +116,7 @@ Vue.createApp({
             })
 
         },
+        
         modal_cert_usert_close(){
 
         },
@@ -224,7 +225,6 @@ Vue.createApp({
             axios.post('./api/cert/get_users_pkkjc.php')    
             .then(response => {
                 if(response.data.status){
-                    this.alert('success',response.data.message,timer=0)
                     this.users = response.data.users
                 }
             })
@@ -240,8 +240,10 @@ Vue.createApp({
                 })    
                 .then(response => {
                     if(response.data.status){
-                        this.alert('success',response.data.message,timer=0)
+                        this.alert('success',response.data.message,timer=3000)
                         this.users = response.data.users
+                        this.$refs.btn_user_close.click()
+
                     }
                 })
                 .catch(function (error) {
@@ -264,7 +266,7 @@ Vue.createApp({
                     axios.post('./api/cert/add_users.php',{template:template})    
                         .then(response => {
                             if(response.data.status){
-                                this.alert('success',message,timer=0)
+                                this.alert('success',message,timer=3000)
                                 this.get_project()
                             }
                         })
@@ -291,12 +293,12 @@ Vue.createApp({
                     axios.post('./api/cert/del_user.php',{id:pju.id})    
                         .then(response => {
                             this.get_projects()
+                            this.cert_users(pju.project_id)
                             this.alert('success',response.data.message,timer=1000)
                         })
                         .catch(function (error) {
                             console.log(error);
-                        });                    
-                    this.get_projects()
+                        });             
                 } else if (result.isDenied) {
                     Swal.fire('Changes are not saved', '', 'info')
                 }
@@ -317,28 +319,13 @@ Vue.createApp({
                     axios.post('./api/cert/del_user.php',{id:c_user.id})    
                         .then(response => {
                             this.get_projects()
+                            this.cert_users(c_user.project_id)
                             this.alert('success',response.data.message,timer=1000)
-                            this.isLoading = true;
-                            axios.post('./api/cert/get_cert_users.php',{id:c_user.project_id})
-                            .then(response => {
-                                if (response.data.status) {
-                                    this.c_users = response.data.c_users
-                                    this.$refs.modal_cert_user.click()
-                                } else{
-                                    this.alert("error",response.data.message,5000)
-                                }
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            })
-                            .finally(() => {
-                                this.isLoading = false;
-                            })
+                            
                         })
                         .catch(function (error) {
                             console.log(error);
-                        });                    
-                    this.get_projects()
+                        });             
                 } else if (result.isDenied) {
                     Swal.fire('Changes are not saved', '', 'info')
                 }

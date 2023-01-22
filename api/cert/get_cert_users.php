@@ -22,9 +22,11 @@ $datas_main = array();
 $project_id = $data->id;
     // The request is using the POST method
     try{
-        $sql = "SELECT *
-                FROM project_user 
-                WHERE project_id = $project_id";
+        $sql = "SELECT project_user.*, project_template.template_name 
+                FROM project_user
+                INNER JOIN project_template 
+                ON project_template.id = project_user.project_template_id 
+                WHERE project_user.project_id =  $project_id ";
         $query = $conn->prepare($sql);
         $query->execute();
         $result = $query->fetchAll(PDO::FETCH_OBJ);

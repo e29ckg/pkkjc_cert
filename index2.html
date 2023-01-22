@@ -110,7 +110,7 @@
                             <img @click="bnt_img_show(pj.id)" v-if="pj.img" :src="'./img/' + pj.img" class="img-fluid rounded-start mt-2" alt="...">
                             <img @click="bnt_img_show(pj.id)" v-else src="./img/none.png" class="img-fluid rounded-start mt-2" alt="...">
                           </div>
-                          <div class="col-md-7">
+                          <div class="col-md-6">
                             <div class="card-body">
                               <h5 class="card-title">{{pj.id}} {{pj.name}}</h5>
                               <p class="card-text">{{pj.detail}}This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
@@ -122,7 +122,7 @@
                               </div>
                             </div>
                           </div> 
-                          <div class="col-md-3 mt-2">                            
+                          <div class="col-md-4 mt-2">                            
                             <table class="table table-striped table-sm">
                                 <thead>
                                   <tr>
@@ -141,6 +141,9 @@
                                         {{tmp.id}}
                                         <button @click="btn_template_update(tmp)" class="btn btn-warning">แก้ไข</button>
                                         <button @click="btn_template_del2(tmp)" class="btn btn-danger">ลบ</button>
+                                        <button  class="btn btn-success" @click="user_add(tmp)">
+                                            เพิ่ม {{tmp.template_name}}
+                                        </button>
                                     </td>
                                   </tr>                          
                                 </tbody>
@@ -149,11 +152,7 @@
 
                         </div>                        
                         
-                        <div class="row g-0">
-                            <button v-for="tmp,index in pj.template" class="btn btn-success" @click="user_add(tmp)">
-                                เพิ่ม {{tmp.template_name}}
-                            </button>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -184,7 +183,7 @@
                 </div>
                 <div class="mb-3">
                   <label for="ex3" class="form-label">ปีงบประมาณ</label>
-                  <input type="number" class="form-control" min="2565" max="2570" id="ex3" placeholder="2566" v-model="project.year">
+                  <input type="number" class="form-control" min="2023"  id="ex3" placeholder="2566" v-model="project.year">
                 </div>
                 <div class="mb-3">
                   <label for="ex30" class="form-label">ระยะเวลารวม</label>
@@ -319,19 +318,21 @@
                             <th scope="col">#</th>
                             <th scope="col">Name</th>
                             <th scope="col">Cert</th>
+                            <th scope="col">ACT</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr v-for="cu,index in c_users">
                             <th scope="row">{{index + 1}}</th>
                             <td>{{cu.name}}</td>
+                            <td>{{cu.template_name}}</td>
                             <td>{{cu.id}}<button @click="c_user_del(cu)">ลบ</button></td>
                             
                           </tr>                          
                         </tbody>
                       </table>
                 </div>
-                <!-- {{c_users}} -->
+                {{c_users}}
               </div>
               
             </div>
@@ -353,9 +354,13 @@
               <div class="modal-body">
                 <div class="row g-0">
                     <button @click="user_add_pkkjc">สมาชิกของศาล</button>
+                    
+                      
+
                     <table class="table table-striped">
                         <thead>
                           <tr>
+                            <th scope="col">#</th>
                             <th scope="col">#</th>
                             <th scope="col">Name</th>
                             <th scope="col">Cert</th>
@@ -364,6 +369,7 @@
                         <tbody>
                           <tr v-for="us,index in users">
                             <th scope="row">{{index + 1}}</th>
+                            <th scope="row"> <input v-model="us.ch" class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>
                             <td>{{us.name}}</td>
                             <td>{{us.id}}
                                 <button @click="user_del(index)">ลบ</button>
@@ -372,7 +378,7 @@
                         </tbody>
                       </table>
                 </div>
-                {{users.length}} 
+                {{users}} 
                 {{template}}
               </div>
               <div class="modal-footer">

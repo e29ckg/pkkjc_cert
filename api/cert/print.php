@@ -25,13 +25,26 @@ $datas_main = array();
     // The request is using the POST method
     try{
        
-        $sql = "SELECT pr_u.*, pr_u.name as uname, pr.*
-                FROM project_user AS pr_u
-                INNER JOIN project AS pr ON pr_u.project_id = pr.id
-                WHERE pr_u.id = $pro_user_id";
+        $sql = "SELECT project_user.*
+                FROM project_user 
+                WHERE project_user.id = $pro_user_id";
         $query = $conn->prepare($sql);
         $query->execute();
         $result = $query->fetch(PDO::FETCH_OBJ);
+
+        $sql = "SELECT project_template.*
+                FROM project_template 
+                WHERE id = $result->project_template_id";
+        $query = $conn->prepare($sql);
+        $query->execute();
+        $rs_template = $query->fetch(PDO::FETCH_OBJ);
+
+        $sql = "SELECT project_text.*
+                FROM project_text 
+                WHERE project_template_id = $result->project_template_id";
+        $query = $conn->prepare($sql);
+        $query->execute();
+        $rs_text = $query->fetchAll(PDO::FETCH_OBJ);
 
 
         if($query->rowCount() > 0){                        //count($result)  for odbc
@@ -51,7 +64,10 @@ $datas_main = array();
             echo json_encode(array(
                 'status'    => true, 
                 'massege'   => 'สำเร็จ', 
-                'resp'      => $result));
+                'resp'      => $result,
+                'template' => $rs_template,
+                'text' => $rs_text 
+            ));
             exit;
         }
      

@@ -37,20 +37,21 @@ Vue.createApp({
     
     methods: {
        get_projects(){
-            axios.get('./api/cert/get_projects.php')
-                .then(response => {
-                    if (response.data.status) {
-                        this.datas = response.data
-                        this.projects = response.data.projects
-                        console.log(response.data)
-                    } 
-                })
-                .catch(function (error) {
-                    console.log(error);
-                })
-                .finally(() => {
-                    this.isLoading = false;
-                })
+            this.isLoading = true;
+            axios.get('./api/cert/get_projects_index.php')
+            .then(response => {
+                if (response.data.status) {
+                    this.datas = response.data
+                    this.projects = response.data.projects
+                    console.log(response.data)
+                } 
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+            .finally(() => {
+                this.isLoading = false;
+            })
         
        }, 
        print(id){
@@ -59,7 +60,9 @@ Vue.createApp({
             .then(response => {
                 if (response.data.status) {
                     axios.post('/mpdf/api/cert/index.php',{
-                        data    : response.data.resp
+                        data        : response.data.resp,
+                        template    : response.data.template,
+                        text        : response.data.text[0],
                     }) 
                     .then(response => {
                         url = response.data.url
@@ -110,6 +113,6 @@ Vue.createApp({
     //   },
     },
   
-  }).mount('#index1')
+  }).mount('#index')
 
   

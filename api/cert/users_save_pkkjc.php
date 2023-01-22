@@ -21,23 +21,26 @@ $datas = array();
     try{
         
             foreach($users as $rs){
-                $name = $rs->fname.$rs->name.' '.$rs->sname;
-                $user_status = 1;
-                $active = 1;
+                if(isset($rs->ch) && $rs->ch == true){
 
-                $project_template_id = $template->id;
-                $project_id             = $template->project_id;
-
-                $sql = "INSERT INTO project_user(project_id, project_template_id, user_id, name, user_status, active) 
-                    VALUE(:project_id, :project_template_id, :user_id, :name, :user_status, :active);";        
-                $query = $conn->prepare($sql);
-                $query->bindParam(':project_id',$project_id, PDO::PARAM_STR);
-                $query->bindParam(':project_template_id',$project_template_id, PDO::PARAM_STR);
-                $query->bindParam(':user_id',$rs->user_id, PDO::PARAM_INT);
-                $query->bindParam(':name',$name, PDO::PARAM_STR);
-                $query->bindParam(':user_status',$user_status, PDO::PARAM_INT);
-                $query->bindParam(':active',$active, PDO::PARAM_INT);
-                $query->execute();
+                    $name = $rs->fname.$rs->name.' '.$rs->sname;
+                    $user_status = 1;
+                    $active = 1;
+    
+                    $project_template_id = $template->id;
+                    $project_id             = $template->project_id;
+    
+                    $sql = "INSERT INTO project_user(project_id, project_template_id, user_id, name, user_status, active) 
+                        VALUE(:project_id, :project_template_id, :user_id, :name, :user_status, :active);";        
+                    $query = $conn->prepare($sql);
+                    $query->bindParam(':project_id',$project_id, PDO::PARAM_STR);
+                    $query->bindParam(':project_template_id',$project_template_id, PDO::PARAM_STR);
+                    $query->bindParam(':user_id',$rs->user_id, PDO::PARAM_INT);
+                    $query->bindParam(':name',$name, PDO::PARAM_STR);
+                    $query->bindParam(':user_status',$user_status, PDO::PARAM_INT);
+                    $query->bindParam(':active',$active, PDO::PARAM_INT);
+                    $query->execute();
+                }
 
 
                 // array_push($datas,array(
