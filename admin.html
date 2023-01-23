@@ -110,25 +110,26 @@
                             <img @click="bnt_img_show(pj.id)" v-if="pj.img" :src="'./img/' + pj.img" class="img-fluid rounded-start mt-2" alt="...">
                             <img @click="bnt_img_show(pj.id)" v-else src="./img/none.png" class="img-fluid rounded-start mt-2" alt="...">
                           </div>
-                          <div class="col-md-6">
+                          <div class="col-md-5">
                             <div class="card-body">
                               <h5 class="card-title">{{pj.id}} {{pj.name}}</h5>
-                              <p class="card-text">{{pj.detail}}This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                              <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                              <p class="card-text">{{pj.detail}}</p>
+                              <p class="card-text" v-if="pj.date_train">วันที่อบรม {{pj.date_train}}</p>
+                              <p class="card-text"><small class="text-muted">รวมระยะเวลาทั้งสิ้น {{pj.period}}</small></p>
                               <div class="card-footer text-center mt-3">
-                                  <button @click="cert_users(pj.id)" class="btn btn-success">สมาชิก</button>
-                                  <button @click="project_update(pj.id)" class="btn btn-success">แก้ไข</button>
+                                  
+                                  <button @click="project_update(pj.id)" class="btn btn-success me-1">แก้ไข</button>
                                   <button @click="project_del(pj.id)" class="btn btn-danger">DELETE</button>
                               </div>
                             </div>
                           </div> 
-                          <div class="col-md-4 mt-2">                            
+                          <div class="col-md-5 mt-2">                            
                             <table class="table table-striped table-sm">
                                 <thead>
                                   <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Name</th>
-                                    <th scope="col text-end">
+                                    <th scope="col " class="text-end">
                                         <button @click="template_add(pj.id)" class="btn btn-success btn-sm">เพิ่ม Template</button>
                                     </th>
                                   </tr>
@@ -137,23 +138,27 @@
                                   <tr v-for="tmp,index in pj.template">
                                     <th scope="row">{{index+1}}</th>
                                     <td>{{tmp.template_name}}</td>
-                                    <td>
+                                    <td class="text-end">
                                         {{tmp.id}}
-                                        <button @click="btn_template_update(tmp)" class="btn btn-warning">แก้ไข</button>
-                                        <button @click="btn_template_del2(tmp)" class="btn btn-danger">ลบ</button>
-                                        <button  class="btn btn-success" @click="user_add(tmp)">
+                                        <button  class="btn btn-success me-1" @click="user_add(tmp)">
                                             เพิ่ม {{tmp.template_name}}
                                         </button>
+                                        <button @click="btn_template_update(tmp)" class="btn btn-warning me-1">แก้ไข</button>
+                                        <button @click="btn_template_del2(tmp)" class="btn btn-danger">ลบ</button>
                                     </td>
                                   </tr>                          
                                 </tbody>
                             </table>
+                            <div class="text-center">
+
+                                <button @click="cert_users(pj.id)" class="btn btn-success">ผู้ได้รับใบประกาศทั้งหมด</button>
+                            </div>
                           </div>
 
                         </div>                        
                         
-                        
                     </div>
+                    {{users}} 
                 </div>
             </div>
         </section>
@@ -183,15 +188,15 @@
                 </div>
                 <div class="mb-3">
                   <label for="ex3" class="form-label">ปีงบประมาณ</label>
-                  <input type="number" class="form-control" min="2023"  id="ex3" placeholder="2566" v-model="project.year">
+                  <input type="number" class="form-control" min="2023"  id="ex3" placeholder="2023" v-model="project.year">
                 </div>
                 <div class="mb-3">
                   <label for="ex30" class="form-label">ระยะเวลารวม</label>
-                  <input type="number" class="form-control" min="1" max="100" id="ex30" placeholder="1" v-model="project.period">
+                  <input type="text" class="form-control" id="ex30" placeholder="1" v-model="project.period">
                 </div>
                 <div class="mb-3">
                   <label for="ex4" class="form-label">วันที่จัดโครงการ</label>
-                  <input type="date" class="form-control" id="ex4" placeholder="วันที่จัดโครการ" v-model="project.date_train">
+                  <input type="text" class="form-control" id="ex4" placeholder="วันที่จัดโครการ" v-model="project.date_train">
                 </div>
                 
 
@@ -293,6 +298,7 @@
                         <button @click="bnt_template_close" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -332,7 +338,7 @@
                         </tbody>
                       </table>
                 </div>
-                {{c_users}}
+                <!-- {{c_users}} -->
               </div>
               
             </div>
@@ -354,9 +360,6 @@
               <div class="modal-body">
                 <div class="row g-0">
                     <button @click="user_add_pkkjc">สมาชิกของศาล</button>
-                    
-                      
-
                     <table class="table table-striped">
                         <thead>
                           <tr>
@@ -366,7 +369,7 @@
                             <th scope="col">Cert</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-if="users.length">
                           <tr v-for="us,index in users">
                             <th scope="row">{{index + 1}}</th>
                             <th scope="row"> <input v-model="us.ch" class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></th>
@@ -378,12 +381,12 @@
                         </tbody>
                       </table>
                 </div>
-                {{users}} 
-                {{template}}
+                <!-- {{users}}  -->
+                <!-- {{template}} -->
               </div>
               <div class="modal-footer">
                   <button @click="bnt_template_close" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button v-if="users.length > 0" type="button" class="btn btn-primary" @click="user_save()">สร้าง</button>
+                  <button type="button" class="btn btn-primary" @click="user_save()">สร้าง</button>
                 
             </div>
               

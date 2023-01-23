@@ -53,7 +53,7 @@ $project_id = $data->id;
         }
      
         http_response_code(200);
-        echo json_encode(array('status' => false, 'message' => 'ไม่พบข้อมูล '));
+        echo json_encode(array('status' => false, 'message' => 'ไม่พบข้อมูล ','c_users' => []));
     
     }catch(PDOException $e){
         // echo "Faild to connect to database" . $e->getMessage();

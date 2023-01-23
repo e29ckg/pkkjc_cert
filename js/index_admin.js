@@ -103,8 +103,11 @@ Vue.createApp({
             .then(response => {
                 if (response.data.status) {
                     this.c_users = response.data.c_users
+                    this.users = []
                     this.$refs.modal_cert_user.click()
                 } else{
+                    this.c_users = response.data.c_users
+                    this.users = []
                     this.alert("error",response.data.message,3000)
                 }
             })
@@ -241,7 +244,7 @@ Vue.createApp({
                 .then(response => {
                     if(response.data.status){
                         this.alert('success',response.data.message,timer=3000)
-                        this.users = response.data.users
+                        this.users = []
                         this.$refs.btn_user_close.click()
 
                     }

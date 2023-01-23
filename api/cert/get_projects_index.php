@@ -51,9 +51,11 @@ $datas_main = array();
                 // $template = array();
                 // foreach($res_template as $rst){
 
-                    $sql = "SELECT pru.*
-                            FROM project_user AS pru                
-                            WHERE pru.project_id = $rs->id ";
+                    $sql = "SELECT project_user.*, project_template.template_name 
+                            FROM project_user
+                            INNER JOIN project_template 
+                            ON project_template.id = project_user.project_template_id 
+                            WHERE project_user.project_id =  $rs->id ";
                     $query = $conn->prepare($sql);
                     $query->execute();
                     $res_pr_u = $query->fetchAll(PDO::FETCH_OBJ);

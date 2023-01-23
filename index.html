@@ -103,45 +103,47 @@
                     <div class="card mb-3" >
                         <div class="row g-0">
                           <div class="col-md-2 ">
-                            <img @click="bnt_img_show(pj.id)" v-if="pj.img" :src="'./img/' + pj.img" class="img-fluid rounded-start mt-2" alt="...">
-                            <img @click="bnt_img_show(pj.id)" v-else src="./img/none.png" class="img-fluid rounded-start mt-2" alt="...">
+                            <img  v-if="pj.img" :src="'./img/' + pj.img" class="img-fluid rounded-start mt-2" alt="...">
+                            <img  v-else src="./img/none.png" class="img-fluid rounded-start mt-2" alt="...">
                           </div>
                           <div class="col-md-10">
                             <div class="card-body">
-                              <h5 class="card-title">{{pj.id}} {{pj.name}}</h5>
+                              <h5 class="card-title">{{pj.name}}</h5>
                               <p class="card-text">{{pj.detail}}</p>
-                              <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                              <p class="card-text" v-if="pj.date_train">วันที่อบรม {{pj.date_train}}</p>
+                              <p class="card-text"><small class="text-muted">รวมระยะเวลาทั้งสิ้น {{pj.period}}</small></p>
                               <div class="card-footer text-center mt-3">
                                   
                               </div>
+                              <div class="row g-0" v-if="pj.c_users">
+                                  <table class="table table-striped table-sm">
+                                      <thead>
+                                        <tr>
+                                          <th scope="col">#</th>
+                                          <th scope="col">Name</th>
+                                          <th scope="col text-end">
+                                              
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr v-for="pju,index in pj.c_users">
+                                          <th scope="row">{{index + 1}}</th>
+                                          <td>{{pju.name}}</td>
+                                          <td>
+                                              <button @click="print(pju.id)" class="btn btn-warning">พิมพ์ ({{pju.template_name}})</button>
+                                             
+                                          </td>
+                                        </tr>                          
+                                      </tbody>
+                                  </table>
+                              </div>    
                             </div>
                           </div> 
                           
 
                         </div>  
-                        <div class="row g-0" v-if="pj.c_users">
-                            <table class="table table-striped table-sm">
-                                <thead>
-                                  <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col text-end">
-                                        
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr v-for="pju,index in pj.c_users">
-                                    <th scope="row">{{index + 1}}</th>
-                                    <td>{{pju.name}}</td>
-                                    <td>
-                                        <button @click="print(pju.id)" class="btn btn-warning">พิมพ์</button>
-                                       
-                                    </td>
-                                  </tr>                          
-                                </tbody>
-                            </table>
-                        </div>                      
+                                          
                         
                         
                     </div>
